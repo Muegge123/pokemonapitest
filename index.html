@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PokemonApp</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js"></script>
+  </head>
+  <body onload="init()">
+    <header>
+      <div class="header-inner">
+        <h1>Pokedex</h1>
+        <div class="search-container">
+          <input type="text" id="search-pokemon" />
+          <button>Suchen</button>
+        </div>
+      </div>
+    </header>
+    <!-- START dialog -->
+    <div id="dialog-shadow" class="dialog-shadow d-none">
+      <div id="dialog">
+        <div id="dialog-navi" class="dialog-navi">
+          <img id="previous-icon" src="./img/left-long-solid.svg" alt="" />
+          <img id="close-icon" src="./img/circle-xmark-solid.svg" alt="" />
+          <img id="next-icon" src="./img/left-long-solid.svg" alt="" />
+        </div>
+        <div class="dialog-header">
+          <h2 id="dialog-pokemon-name">Name usw</h2>
+          <span id="dialog-pokemon-id">#1</span>
+        </div>
+        <div class="dialog-img-container">
+          <img
+            id="pokemon-single-img"
+            class="pokemon-single-img"
+            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+            alt=""
+          />
+        </div>
+        <div class="dialog-content">
+          <div class="dialog-content-inner">stats</div>
+        </div>
+      </div>
+    </div>
+    <!-- END dialog -->
+
+    <div id="pokedex">
+      <div id="pokemon-card1" class="pokemon-card">
+        <div class="pokemon-card-left">
+          <h2 id="pokemon-name">Name</h2>
+          <div class="pokemon-skills">
+            <span class="pokemon-skill-span">fire</span>
+            <span class="pokemon-skill-span">fire</span>
+          </div>
+        </div>
+        <div class="pokemon-card-right">
+          <div class="pokemon-id">#1</div>
+          <div class="pokemon-img-container">
+            <img
+              class="pokemon-background-img"
+              src="./img/pokeball.png"
+              alt=""
+            />
+            <img
+              id="pokemon-img"
+              class="pokemon-img"
+              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/132.png"
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="https://commons.wikimedia.org/wiki/File:Pok%C3%A9_Ball_icon.svg"
+        >Pokeball Bildnachweis</a
+      >
+      <a href="https://fontawesome.com/icons/left-long?f=classic&s=solid"
+        >icons by fontawesome</a
+      >
+    </footer>
+  </body>
+</html>
