@@ -19,6 +19,7 @@ async function loadPokemon() {
   // console.log(loadedPokemonArray);
   console.log(loadedPokemonArray[1]["id"]);
   console.log(loadedPokemonArray[1]["stats"][2]);
+  console.log(loadedPokemonArray[4]["stats"].length);
 
   renderPokemonCard();
 }
@@ -35,12 +36,7 @@ function renderPokemonDialog(indexOfPokemon) {
   // show dialog and remove d-none class from dialog-shadow-div
   removeClass("dialog-shadow", "d-none");
   renderBasicInfoDialog(indexOfPokemon);
-}
-
-// ##### multi helper functions
-// remove class from classlist
-function removeClass(elementID, classToRemove) {
-  document.getElementById(elementID).classList.remove(classToRemove);
+  renderStats(indexOfPokemon);
 }
 
 // function renders basic Infos of Pokemon Dialog
@@ -61,6 +57,22 @@ function renderBasicInfoDialog(indexOfPokemon) {
   document.getElementById(
     "dialog-pokemon-id"
   ).textContent = `#${loadedPokemonArray[indexOfPokemon]["id"]}`;
+}
+
+// dialog : render stats
+function renderStats(indexOfPokemon) {
+  document.getElementById("dialog-content-data").innerHTML = "";
+  for (let i = 0; i < loadedPokemonArray[indexOfPokemon]["stats"].length; i++) {
+    document.getElementById(
+      "dialog-content-data"
+    ).innerHTML += `<div>${loadedPokemonArray[indexOfPokemon]["stats"][i]["stat"]["name"]}: ${loadedPokemonArray[indexOfPokemon]["stats"][i]["base_stat"]}</div>`;
+  }
+}
+
+// ##### multi helper functions
+// remove class from classlist
+function removeClass(elementID, classToRemove) {
+  document.getElementById(elementID).classList.remove(classToRemove);
 }
 
 function returnPokemonCardHTML(i) {
@@ -102,49 +114,3 @@ function returnDialogNaviHTML(idOfRenderedPokemon) {
     idOfRenderedPokemon + 1
   })" id="next-icon" src="./img/left-long-solid.svg" alt="" />`;
 }
-
-// async function loadPokemon() {
-//   let resPokemonData = await fetch(urlDitto);
-//   currentPokemon = await resPokemonData.json();
-
-//   renderPokemon(currentPokemon);
-// }
-
-// function renderPokemon(currentPokemon) {
-//   document.getElementById("pokemon-name").innerHTML = currentPokemon["name"];
-//   document.getElementById("pokemon-img").src =
-//     currentPokemon["sprites"]["other"]["official-artwork"]["front_default"];
-// }
-
-// function returnPokemonCardHTML(currentPokemon) {
-//   return `
-//   <div>Species: ${currentPokemon["species"]["name"]}
-//   </div>
-//   `;
-// }
-
-// background test
-// function createRandomNumber(maximumNumber) {
-//   return Math.floor(Math.random() * maximumNumber);
-// }
-
-// function getRandomColor() {
-//   let h = createRandomNumber(255);
-//   let s = createRandomNumber(100);
-//   let l = createRandomNumber(100);
-//   return `hsl(${h}deg, ${s}%, ${l}%)`;
-// }
-
-// function setBackground() {
-//   const background = document.getElementById("pokemon-card1");
-
-//   function setBackgroundColor(backgroundID) {
-//     let randomColor = getRandomColor();
-//     background.style.backgroundColor = randomColor;
-//     background.style.color = randomColor;
-//   }
-//   setBackgroundColor();
-//   setInterval(() => {
-//     setBackgroundColor();
-//   }, 1500);
-// }
