@@ -80,53 +80,64 @@ async function renderEvolution(indexOfPokemon) {
   let speciesDataAsJSON = await speciesData.json();
   // species data contains url for evolution_chain --> fetch evolution data
   let urlEvolutionChain = speciesDataAsJSON["evolution_chain"]["url"];
-  console.log(`urlEvolutionChain: ${urlEvolutionChain}`);
   let evolutionData = await fetch(urlEvolutionChain);
   let evolutionDataAsJSON = await evolutionData.json();
   // check first evolution
-  try {
-    let firstEvolution = evolutionDataAsJSON["chain"]["species"]["name"];
-    console.log(`firstEvolution: ${firstEvolution}`);
-    evolutionInfoContainer.innerHTML += `<div>${firstEvolution}</div>`;
-    let firstEvolutionImg = evolutionDataAsJSON["chain"]["species"]["url"];
-    console.log(`url komplett ${firstEvolutionImg}`);
-    console.log(`url sliced ${firstEvolutionImg.slice(42).slice(0, -1)}`);
-  } catch (error) {
-    evolutionInfoContainer.innerHTML += "";
-  }
+  evolutionInfoContainer.innerHTML += getFirstEvolutionImg(evolutionDataAsJSON);
   // check second evolution
-  try {
-    let secondEvolution =
-      evolutionDataAsJSON["chain"]["evolves_to"][0]["species"]["name"];
-    console.log(`secondEvolution: ${secondEvolution}`);
-    evolutionInfoContainer.innerHTML += `<div>${secondEvolution}<div>`;
-  } catch (error) {
-    evolutionInfoContainer.innerHTML += "";
-  }
-  // check third evolution (without try)
-  // let thirdEvolution =
-  //   evolutionDataAsJSON["chain"]["evolves_to"][0]["evolves_to"][0]["species"][
-  //     "name"
-  //   ];
-  // console.log(`secondEvolution: ${thirdEvolution}`);
+  evolutionInfoContainer.innerHTML +=
+    getSecondEvolutionImg(evolutionDataAsJSON);
+  // check third evolution
+  evolutionInfoContainer.innerHTML += getThirdEvolutionImg(evolutionDataAsJSON);
+}
 
-  // check third evolution (with try)
-  let thirdEvolution;
+// helper function to renderEvolution() --> renders first evolution img
+function getFirstEvolutionImg(evolutionDataAsJSON) {
   try {
-    thirdEvolution =
+    let firstEvolutionImg = evolutionDataAsJSON["chain"]["species"]["url"];
+    let idOfPokemonFirstEvo = firstEvolutionImg.slice(42).slice(0, -1);
+    return `<img class="evolution-img" src="${
+      loadedPokemonArray[idOfPokemonFirstEvo - 1]["sprites"]["other"][
+        "official-artwork"
+      ]["front_default"]
+    }">`;
+  } catch (error) {
+    return "";
+  }
+}
+
+// helper function to renderEvolution() --> renders second evolution img
+function getSecondEvolutionImg(evolutionDataAsJSON) {
+  try {
+    let secondEvolutionImg =
+      evolutionDataAsJSON["chain"]["evolves_to"][0]["species"]["url"];
+    let idOfPokemonSecondEvo = secondEvolutionImg.slice(42).slice(0, -1);
+    return `<img class="evolution-img" src="${
+      loadedPokemonArray[idOfPokemonSecondEvo - 1]["sprites"]["other"][
+        "official-artwork"
+      ]["front_default"]
+    }">`;
+  } catch (error) {
+    return "";
+  }
+}
+
+// helper function to renderEvolution() --> renders third evolution img
+function getThirdEvolutionImg(evolutionDataAsJSON) {
+  try {
+    let thirdEvolutionImg =
       evolutionDataAsJSON["chain"]["evolves_to"][0]["evolves_to"][0]["species"][
-        "name"
+        "url"
       ];
-    console.log(`thirdEvolution: ${thirdEvolution}`);
-    evolutionInfoContainer.innerHTML += `<div>${thirdEvolution}</div>`;
+    let idOfPokemonThirdEvo = thirdEvolutionImg.slice(42).slice(0, -1);
+    return `<img class="evolution-img" src="${
+      loadedPokemonArray[idOfPokemonThirdEvo - 1]["sprites"]["other"][
+        "official-artwork"
+      ]["front_default"]
+    }">`;
   } catch (error) {
-    evolutionInfoContainer.innerHTML += "";
+    return "";
   }
-
-  // set innerHTML and add first-, second-, third-evolution
-  //   document.getElementById("dialog-content-evo").innerHTML = "";
-  //   document.getElementById("dialog-content-evo").innerHTML = `
-  // <div>${firstEvolution}</div><div>${secondEvolution}<div>${thirdEvolution}</div>`;
 }
 
 // function to close dialog by clicking outside dialog

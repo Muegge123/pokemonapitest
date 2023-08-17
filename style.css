@@ -175,12 +175,22 @@ header {
   padding: 16px;
 }
 
+.dialog-content h3 {
+  margin: 0 0 8px 0;
+}
+
 #dialog-content-data {
   padding-bottom: 16px;
 }
 
 #dialog-content-evo {
   padding-bottom: 16px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.evolution-img {
+  width: 120px;
 }
 
 @media (max-width: 960px) {
@@ -201,5 +211,9 @@ header {
   .pokemon-single-img {
     width: 120px;
     top: 24px;
+  }
+
+  .evolution-img {
+    width: 75px;
   }
 }
