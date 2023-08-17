@@ -179,6 +179,10 @@ header {
   margin: 0 0 8px 0;
 }
 
+#dialog-content-characteristics {
+  padding-bottom: 16px;
+}
+
 #dialog-content-data {
   padding-bottom: 16px;
 }
@@ -191,6 +195,11 @@ header {
 
 .evolution-img {
   width: 120px;
+}
+
+#dialog-content-moves {
+  overflow: scroll;
+  height: 69px;
 }
 
 @media (max-width: 960px) {

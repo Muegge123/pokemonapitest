@@ -5,8 +5,8 @@ function returnPokemonCardHTML(i) {
         <div class="pokemon-card-left">
           <h2 id="pokemon-name">${loadedPokemonArray[i]["species"]["name"]}</h2>
           <div class="pokemon-skills">
-            <span class="pokemon-skill-span">fire</span>
-            <span class="pokemon-skill-span">fire</span>
+            <span class="pokemon-skill-span">${loadedPokemonArray[i]["types"]["0"]["type"]["name"]}</span>
+            <span class="pokemon-skill-span">height: ${loadedPokemonArray[i]["height"]}</span>
           </div>
         </div>
         <div class="pokemon-card-right">

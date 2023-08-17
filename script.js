@@ -16,11 +16,6 @@ async function loadPokemon() {
     let resCurrentPokemonAsJSON = await resCurrentPokemon.json();
     loadedPokemonArray.push(resCurrentPokemonAsJSON);
   }
-  // console.log(loadedPokemonArray);
-  // console.log(loadedPokemonArray[1]["id"]);
-  // console.log(loadedPokemonArray[1]["stats"][2]);
-  // console.log(loadedPokemonArray[4]["stats"].length);
-
   renderPokemonCard();
 }
 
@@ -36,11 +31,13 @@ function renderPokemonDialog(indexOfPokemon) {
   // show dialog and remove d-none class from dialog-shadow-div
   removeClass("dialog-shadow", "d-none");
   renderBasicInfoDialog(indexOfPokemon);
+  renderCharacteristics(indexOfPokemon);
   renderStats(indexOfPokemon);
   renderEvolution(indexOfPokemon);
+  fetchMoves(indexOfPokemon);
 }
 
-// function renders basic Infos of Pokemon Dialog
+// dialog : function renders basic Infos of Pokemon Dialog
 function renderBasicInfoDialog(indexOfPokemon) {
   // render basic info of pokemon and display in dialog
   document.getElementById("dialog-navi").innerHTML = "";
@@ -58,6 +55,18 @@ function renderBasicInfoDialog(indexOfPokemon) {
   document.getElementById(
     "dialog-pokemon-id"
   ).textContent = `#${loadedPokemonArray[indexOfPokemon]["id"]}`;
+}
+
+// dialog : render characteristics
+async function renderCharacteristics(indexOfPokemon) {
+  let urlCharacteristics = "https://pokeapi.co/api/v2/characteristic/";
+  let idOfPokemon = indexOfPokemon + 1;
+  let responseCharacteristics = await fetch(urlCharacteristics + idOfPokemon);
+  let characteristicsData = await responseCharacteristics.json();
+  console.log(`characteristicsData == ${characteristicsData}`);
+  console.log(characteristicsData.descriptions[4].description);
+  document.getElementById("dialog-content-characteristics").innerHTML =
+    characteristicsData.descriptions[4].description;
 }
 
 // dialog : render stats
@@ -145,15 +154,15 @@ function closeDialog() {
   toggleClass("dialog-shadow", "d-none");
 }
 
-// ##### multi helper functions
-// add class from classlist
-function addClass(elementID, classToRemove) {
-  document.getElementById(elementID).classList.add(classToRemove);
-}
-
+// ##### multi helper functions #####
 // toggle class from classlist
 function toggleClass(elementID, classToRemove) {
   document.getElementById(elementID).classList.toggle(classToRemove);
+}
+
+// add class from classlist
+function addClass(elementID, classToRemove) {
+  document.getElementById(elementID).classList.add(classToRemove);
 }
 
 // remove class from classlist
@@ -163,7 +172,6 @@ function removeClass(elementID, classToRemove) {
 
 /// test
 async function fetchMoves(indexOfPokemon) {
-  console.log("fetchMoves-function");
   let pokemonId = loadedPokemonArray[indexOfPokemon]["id"];
   let apiUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
   try {
@@ -171,7 +179,14 @@ async function fetchMoves(indexOfPokemon) {
     const data = await response.json();
     console.log(data);
     const moves = data.moves.map((move) => move.move.name);
-    // console.log(moves);
+    console.log(moves);
+    document.getElementById("dialog-content-moves").innerHTML =
+      moves.join(", ");
+    // moves.forEach((move) => {
+    //   document.getElementById(
+    //     "dialog-content-moves"
+    //   ).innerHTML += `<div>${move}</div>`;
+    // });
   } catch (error) {
     console.error("Error fetching moves:", error);
   }
