@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PokemonApp</title>
     <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
     <script src="./script.js"></script>
     <script src="./returnHtmlTemplates.js"></script>
   </head>
   <body onload="init()">
     <header>
       <div class="header-inner">
-        <h1>Pokedex</h1>
+        <div class="logo-area">
+          <img src="./img/pokeball.png" alt="pokeball" />
+        </div>
         <div class="search-container">
-          <input type="text" id="search-pokemon" />
-          <button>Suchen</button>
+          <input type="text" id="search-pokemon" placeholder="Suche" />
         </div>
       </div>
     </header>
@@ -40,14 +47,14 @@
         </div>
         <div class="dialog-content">
           <div class="dialog-content-inner">
-            <h3>Characteristics:</h3>
-            <div id="dialog-content-characteristics">Characteristics</div>
+            <!-- <h3>Characteristics:</h3>
+            <div id="dialog-content-characteristics">Characteristics</div> -->
             <h3>Stats:</h3>
             <div id="dialog-content-data">stats</div>
             <h3>Evolution:</h3>
             <div id="dialog-content-evo">evolution</div>
-            <h3>Moves:</h3>
-            <div id="dialog-content-moves">move 1</div>
+            <h3>Abilities:</h3>
+            <div id="dialog-content-moves">abilities</div>
           </div>
         </div>
       </div>
@@ -80,6 +87,12 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="load-more-container">
+      <button id="load-more-btn" onclick="loadMorePokemon()">
+        Mehr Pokemon laden
+      </button>
     </div>
 
     <footer>

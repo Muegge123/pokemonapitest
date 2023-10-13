@@ -1,4 +1,5 @@
 body {
+  font-family: roboto;
   margin: 0;
   background-color: #dee2e6;
   display: flex;
@@ -24,6 +25,26 @@ header {
   flex-direction: row;
 }
 
+.logo-area {
+  display: flex;
+  padding-left: 8px;
+  & img {
+    width: 100px;
+  }
+}
+
+.search-container {
+  display: flex;
+  gap: 8px;
+  padding-right: 8px;
+}
+& input {
+  height: 40px;
+  font-size: 24px;
+  border-radius: 24px;
+  padding-left: 16px;
+}
+
 #pokedex {
   width: 960px;
   display: flex;
@@ -42,6 +63,7 @@ header {
   display: flex;
   justify-content: space-between;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .pokemon-card:hover {
@@ -63,6 +85,7 @@ header {
   border: 1px solid black;
   padding: 4px;
   border-radius: 8px;
+  width: 100px;
 }
 
 .pokemon-card-right {
@@ -133,17 +156,20 @@ header {
 #previous-icon {
   width: 30px;
   opacity: 0.6;
+  cursor: pointer;
 }
 
 #next-icon {
   width: 30px;
   transform: rotateZ(180deg);
   opacity: 0.6;
+  cursor: pointer;
 }
 
 #close-icon {
   width: 30px;
   opacity: 0.6;
+  cursor: pointer;
 }
 
 .dialog-header {
@@ -199,7 +225,30 @@ header {
 
 #dialog-content-moves {
   overflow: scroll;
-  height: 69px;
+  height: 110px;
+}
+
+.single-move {
+  border: 1px solid;
+  padding: 4px 16px;
+  border-radius: 25px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.load-more-container {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+#load-more-btn {
+  font-size: 24px;
+  padding: 24px;
+  border-radius: 24px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
 }
 
 @media (max-width: 960px) {
@@ -224,5 +273,13 @@ header {
 
   .evolution-img {
     width: 75px;
+  }
+
+  .header-inner {
+    flex-direction: column;
+
+    & h1 {
+      margin: 8px;
+    }
   }
 }
