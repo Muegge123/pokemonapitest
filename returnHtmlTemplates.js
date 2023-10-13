@@ -1,22 +1,24 @@
 // ################### returnHtmlTemplates.js == functions that simply return html-templates
 
-function returnPokemonCardHTML(i, color) {
+function returnPokemonCardHTML(arrayOfPokemonToLoad, i, color) {
   return `<div id="pokemon-card${i}" class="pokemon-card" style="background-color: ${
     colors[`${color}`]
-  };" onclick="renderPokemonDialog(${i})">
+  };" onclick="renderPokemonDialog(${arrayOfPokemonToLoad[i]["id"] - 1})">
         <div class="pokemon-card-left">
-          <h2 id="pokemon-name">${loadedPokemonArray[i]["species"]["name"]}</h2>
+          <h2 id="pokemon-name">${
+            arrayOfPokemonToLoad[i]["species"]["name"]
+          }</h2>
           <div class="pokemon-skills">
             <span class="pokemon-skill-span">${
-              loadedPokemonArray[i]["types"]["0"]["type"]["name"]
+              arrayOfPokemonToLoad[i]["types"]["0"]["type"]["name"]
             }</span>
             <span class="pokemon-skill-span">height: ${
-              loadedPokemonArray[i]["height"]
+              arrayOfPokemonToLoad[i]["height"]
             }</span>
           </div>
         </div>
         <div class="pokemon-card-right">
-          <div class="pokemon-id">#${loadedPokemonArray[i]["id"]}</div>
+          <div class="pokemon-id">#${arrayOfPokemonToLoad[i]["id"]}</div>
           <div class="pokemon-img-container">
             <img
               class="pokemon-background-img"
@@ -27,7 +29,7 @@ function returnPokemonCardHTML(i, color) {
               id="pokemon-img"
               class="pokemon-img"
               src="${
-                loadedPokemonArray[i]["sprites"]["other"]["official-artwork"][
+                arrayOfPokemonToLoad[i]["sprites"]["other"]["official-artwork"][
                   "front_default"
                 ]
               }"

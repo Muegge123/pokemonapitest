@@ -15,13 +15,19 @@
     <script src="./returnHtmlTemplates.js"></script>
   </head>
   <body onload="init()">
+    <div class="result"></div>
     <header>
       <div class="header-inner">
         <div class="logo-area">
           <img src="./img/pokeball.png" alt="pokeball" />
         </div>
         <div class="search-container">
-          <input type="text" id="search-pokemon" placeholder="Suche" />
+          <input
+            onkeyup="search(this)"
+            type="text"
+            id="search-pokemon"
+            placeholder="Suche"
+          />
         </div>
       </div>
     </header>

@@ -39,25 +39,40 @@ async function loadPokemon(nextNumberToLoad) {
     let resCurrentPokemonAsJSON = await resCurrentPokemon.json();
     loadedPokemonArray.push(resCurrentPokemonAsJSON);
   }
-  renderPokemonCard();
+  renderPokemonCard(loadedPokemonArray);
   numberPokemonLoaded = numberPokemonLoaded + 21;
 }
 
 // button "load more" function
 function loadMorePokemon() {
   loadPokemon(numberPokemonLoaded);
+  // clear search input
+  document.getElementById("search-pokemon").value = "";
 }
 
 // render pokemon cards (color of cards = compare type.name of pokemon with colors-array from github-list)
-function renderPokemonCard() {
+function renderPokemonCard(arrayOfPokemonToLoad) {
   document.getElementById("pokedex").innerHTML = "";
-  for (let i = 0; i < loadedPokemonArray.length; i++) {
-    let color = loadedPokemonArray[i]["types"][0]["type"]["name"];
+  for (let i = 0; i < arrayOfPokemonToLoad.length; i++) {
+    let color = arrayOfPokemonToLoad[i]["types"][0]["type"]["name"];
     document.getElementById("pokedex").innerHTML += returnPokemonCardHTML(
+      arrayOfPokemonToLoad,
       i,
       color
     );
   }
+}
+
+// function to search for pokemon via input
+function search(input) {
+  const filtered = loadedPokemonArray.filter((element) => {
+    for (const value of Object.values(element)) {
+      if (value.toString().toLowerCase().includes(input.value.toLowerCase()))
+        return true;
+    }
+  });
+
+  renderPokemonCard(filtered);
 }
 
 // function to render dialog for pokemon
@@ -74,8 +89,8 @@ function renderPokemonDialog(indexOfPokemon) {
 // sets the right background-color for dialog/pokemon
 function setBackgroundColorDialog(indexOfPokemon) {
   let color = loadedPokemonArray[indexOfPokemon]["types"][0]["type"]["name"];
-  console.log(color);
-  console.log(colors[`${color}`]);
+  // console.log(color);
+  // console.log(colors[`${color}`]);
   let backgroundColor = colors[`${color}`];
   document.getElementById("dialog").style.backgroundColor = backgroundColor;
 }
@@ -186,7 +201,7 @@ function renderAbilities(indexOfPokemon) {
   let abilities = loadedPokemonArray[indexOfPokemon]["abilities"];
   document.getElementById("dialog-content-moves").innerHTML = "";
   for (let i = 0; i < abilities.length; i++) {
-    console.log(abilities[i]["ability"]["name"]);
+    // console.log(abilities[i]["ability"]["name"]);
     document.getElementById(
       "dialog-content-moves"
     ).innerHTML += `<div class="single-move">${abilities[i]["ability"]["name"]}</div>`;
