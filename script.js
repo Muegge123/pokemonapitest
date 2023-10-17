@@ -1,6 +1,7 @@
-let urlDitto = "https://pokeapi.co/api/v2/pokemon/ditto";
+// let urlDitto = "https://pokeapi.co/api/v2/pokemon/ditto";
 let loadedPokemonArray = [];
 let currentPokemon;
+let myChart;
 
 // colors from: https://gist.github.com/apaleslimghost/0d25ec801ca4fc43317bcff298af43c3
 const colors = {
@@ -26,21 +27,30 @@ const colors = {
 
 let numberPokemonLoaded = 1;
 
+// variable for loading-info dialog (true = show dialog)
+let isLoading;
+
 function init() {
   loadPokemon(1);
+  rotateLogo();
 }
 
 async function loadPokemon(nextNumberToLoad) {
+  // start loading-info while loading
+  toggleClass("loading-info-shadow", "d-none");
+  isLoading = true;
   const url = `https://pokeapi.co/api/v2/pokemon/`;
 
   for (let i = nextNumberToLoad; i < nextNumberToLoad + 21; i++) {
     // pokemon data
     let resCurrentPokemon = await fetch(`${url}${i}`);
     let resCurrentPokemonAsJSON = await resCurrentPokemon.json();
-    loadedPokemonArray.push(resCurrentPokemonAsJSON);
+    await loadedPokemonArray.push(resCurrentPokemonAsJSON);
   }
-  renderPokemonCard(loadedPokemonArray);
+  await renderPokemonCard(loadedPokemonArray);
   numberPokemonLoaded = numberPokemonLoaded + 21;
+  // isLoading = false;
+  toggleClass("loading-info-shadow", "d-none");
 }
 
 // button "load more" function
@@ -48,6 +58,28 @@ function loadMorePokemon() {
   loadPokemon(numberPokemonLoaded);
   // clear search input
   document.getElementById("search-pokemon").value = "";
+}
+
+// animate pokemon logo while loading more pokemon
+function rotateLogo() {
+  if (isLoading) {
+    let degree = 0;
+    const rotateElement = document.getElementById("loading-info-img");
+
+    function rotate() {
+      degree += 15;
+      rotateElement.style.transform = `rotate(${degree}deg)`;
+
+      if (degree < 360) {
+        setTimeout(rotate, 300);
+      } else {
+        degree = 0;
+        setTimeout(rotate, 300);
+      }
+    }
+
+    rotate();
+  }
 }
 
 // render pokemon cards (color of cards = compare type.name of pokemon with colors-array from github-list)
@@ -77,20 +109,20 @@ function search(input) {
 
 // function to render dialog for pokemon
 function renderPokemonDialog(indexOfPokemon) {
-  // show dialog and remove d-none class from dialog-shadow-div
-  setBackgroundColorDialog(indexOfPokemon);
-  removeClass("dialog-shadow", "d-none");
-  renderBasicInfoDialog(indexOfPokemon);
-  renderStats(indexOfPokemon);
-  renderEvolution(indexOfPokemon);
-  renderAbilities(indexOfPokemon);
+  if (indexOfPokemon == loadedPokemonArray.length) {
+    loadMorePokemon();
+  } else {
+    setBackgroundColorDialog(indexOfPokemon);
+    removeClass("dialog-shadow", "d-none");
+    renderBasicInfoDialog(indexOfPokemon);
+    renderTabNav(indexOfPokemon);
+    renderStats(indexOfPokemon);
+  }
 }
 
 // sets the right background-color for dialog/pokemon
 function setBackgroundColorDialog(indexOfPokemon) {
   let color = loadedPokemonArray[indexOfPokemon]["types"][0]["type"]["name"];
-  // console.log(color);
-  // console.log(colors[`${color}`]);
   let backgroundColor = colors[`${color}`];
   document.getElementById("dialog").style.backgroundColor = backgroundColor;
 }
@@ -115,97 +147,80 @@ function renderBasicInfoDialog(indexOfPokemon) {
   ).textContent = `#${loadedPokemonArray[indexOfPokemon]["id"]}`;
 }
 
+// render tab-box in pokemon dialog
+function renderTabNav(indexOfPokemon) {
+  let tabNav = document.getElementById("dialog-content-inner-nav");
+  tabNav.innerHTML = "";
+  tabNav.innerHTML += `<div onclick="renderStats(${indexOfPokemon})" id="stats-nav" class="nav-item">stats</div>`;
+  tabNav.innerHTML += `<div onclick="renderEvolution(${indexOfPokemon})" id="evolution-nav" class="nav-item">evolution</div>`;
+  tabNav.innerHTML += `<div onclick="renderAbilities(${indexOfPokemon})" id="abilities-nav" class="nav-item">abilities</div>`;
+}
+
+// tab-box in pokemon dialog --> set nav-item activ / deactivate other nav-items
+function toggleNavItems(navItemToActivate, classToToggle) {
+  removeClass("stats-nav", "dialog-content-inner-nav-active");
+  removeClass("evolution-nav", "dialog-content-inner-nav-active");
+  removeClass("abilities-nav", "dialog-content-inner-nav-active");
+
+  toggleClass(navItemToActivate, classToToggle);
+}
+
 // dialog : render stats
 function renderStats(indexOfPokemon) {
-  document.getElementById("dialog-content-data").innerHTML = "";
+  toggleNavItems("stats-nav", "dialog-content-inner-nav-active");
+  let statsLabels = [];
+  let statsData = [];
+  document.getElementById("dialog-tab-container").innerHTML = "";
+  document.getElementById("dialog-tab-container").innerHTML = `<div>
+              <h2>Stats:</h2>
+              <canvas id="myChart"></canvas>
+            </div>`;
   for (let i = 0; i < loadedPokemonArray[indexOfPokemon]["stats"].length; i++) {
-    document.getElementById(
-      "dialog-content-data"
-    ).innerHTML += `<div>${loadedPokemonArray[indexOfPokemon]["stats"][i]["stat"]["name"]}: ${loadedPokemonArray[indexOfPokemon]["stats"][i]["base_stat"]}</div>`;
+    statsLabels.push(
+      loadedPokemonArray[indexOfPokemon]["stats"][i]["stat"]["name"]
+    );
+    statsData.push(loadedPokemonArray[indexOfPokemon]["stats"][i]["base_stat"]);
+  }
+  checkChartAndRender(statsLabels, statsData);
+}
+
+// check if chart exits and destroy existing chart / generate new chart
+function checkChartAndRender(statsLabels, statsData) {
+  if (myChart) {
+    myChart.destroy();
+    renderChart(statsLabels, statsData);
+  } else {
+    renderChart(statsLabels, statsData);
   }
 }
 
-// render evolution of Pokemon species
-async function renderEvolution(indexOfPokemon) {
-  let evolutionInfoContainer = document.getElementById("dialog-content-evo");
-  evolutionInfoContainer.innerHTML = "";
-  // set url for species + id of pokemon ad fetch species data
-  let urlSpecies = `https://pokeapi.co/api/v2/pokemon-species/${loadedPokemonArray[indexOfPokemon]["id"]}/`;
-  let speciesData = await fetch(urlSpecies);
-  let speciesDataAsJSON = await speciesData.json();
-  // species data contains url for evolution_chain --> fetch evolution data
-  let urlEvolutionChain = speciesDataAsJSON["evolution_chain"]["url"];
-  let evolutionData = await fetch(urlEvolutionChain);
-  let evolutionDataAsJSON = await evolutionData.json();
-  // check first evolution
-  evolutionInfoContainer.innerHTML += getFirstEvolutionImg(evolutionDataAsJSON);
-  // check second evolution
-  evolutionInfoContainer.innerHTML +=
-    getSecondEvolutionImg(evolutionDataAsJSON);
-  // check third evolution
-  evolutionInfoContainer.innerHTML += getThirdEvolutionImg(evolutionDataAsJSON);
-}
+// generate chart
+// >>> chart options:
+let chartOptions = {
+  scales: {
+    y: {
+      beginAtZero: true,
+    },
+  },
+};
 
-// helper function to renderEvolution() --> renders first evolution img
-function getFirstEvolutionImg(evolutionDataAsJSON) {
-  try {
-    let firstEvolutionImg = evolutionDataAsJSON["chain"]["species"]["url"];
-    let idOfPokemonFirstEvo = firstEvolutionImg.slice(42).slice(0, -1);
-    return `<img class="evolution-img" src="${
-      loadedPokemonArray[idOfPokemonFirstEvo - 1]["sprites"]["other"][
-        "official-artwork"
-      ]["front_default"]
-    }">`;
-  } catch (error) {
-    return "";
-  }
-}
-
-// helper function to renderEvolution() --> renders second evolution img
-function getSecondEvolutionImg(evolutionDataAsJSON) {
-  try {
-    let secondEvolutionImg =
-      evolutionDataAsJSON["chain"]["evolves_to"][0]["species"]["url"];
-    let idOfPokemonSecondEvo = secondEvolutionImg.slice(42).slice(0, -1);
-    return `<img class="evolution-img" src="${
-      loadedPokemonArray[idOfPokemonSecondEvo - 1]["sprites"]["other"][
-        "official-artwork"
-      ]["front_default"]
-    }">`;
-  } catch (error) {
-    return "";
-  }
-}
-
-// helper function to renderEvolution() --> renders third evolution img
-function getThirdEvolutionImg(evolutionDataAsJSON) {
-  try {
-    let thirdEvolutionImg =
-      evolutionDataAsJSON["chain"]["evolves_to"][0]["evolves_to"][0]["species"][
-        "url"
-      ];
-    let idOfPokemonThirdEvo = thirdEvolutionImg.slice(42).slice(0, -1);
-    return `<img class="evolution-img" src="${
-      loadedPokemonArray[idOfPokemonThirdEvo - 1]["sprites"]["other"][
-        "official-artwork"
-      ]["front_default"]
-    }">`;
-  } catch (error) {
-    return "";
-  }
-}
-
-// render abilities
-function renderAbilities(indexOfPokemon) {
-  // let abilities =  loadedPokemonArray[indexOfPokemon]["abilities"][0]["ability"]["name"]
-  let abilities = loadedPokemonArray[indexOfPokemon]["abilities"];
-  document.getElementById("dialog-content-moves").innerHTML = "";
-  for (let i = 0; i < abilities.length; i++) {
-    // console.log(abilities[i]["ability"]["name"]);
-    document.getElementById(
-      "dialog-content-moves"
-    ).innerHTML += `<div class="single-move">${abilities[i]["ability"]["name"]}</div>`;
-  }
+// >>> chart function
+function renderChart(statsLabels, statsData) {
+  const ctx = document.getElementById("myChart");
+  myChart = new Chart(ctx, {
+    type: "polarArea",
+    data: {
+      labels: statsLabels,
+      datasets: [
+        {
+          label: "stats",
+          data: statsData,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: chartOptions,
+  });
 }
 
 // function to close dialog by clicking outside dialog
@@ -214,6 +229,7 @@ function closeDialog() {
 }
 
 // ##### multi helper functions #####
+
 // toggle class from classlist
 function toggleClass(elementID, classToRemove) {
   document.getElementById(elementID).classList.toggle(classToRemove);
@@ -227,38 +243,4 @@ function addClass(elementID, classToRemove) {
 // remove class from classlist
 function removeClass(elementID, classToRemove) {
   document.getElementById(elementID).classList.remove(classToRemove);
-}
-
-// ##### options to render from pokemon api ==> not used on current pokemon card layout #####
-/// render moves ==> optional / not used on current pokemon card
-async function fetchMoves(indexOfPokemon) {
-  let pokemonId = loadedPokemonArray[indexOfPokemon]["id"];
-  let apiUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-    // console.log(data);
-    const moves = data.moves.map((move) => move.move.name);
-    // console.log(moves);
-    // document.getElementById("dialog-content-moves").innerHTML =
-    // moves.join(", ");
-    // console.log(moves);
-    moves.forEach((move) => {
-      document.getElementById(
-        "dialog-content-moves"
-      ).innerHTML += `<div class="single-move">${move}</div>`;
-    });
-  } catch (error) {
-    console.error("Error fetching moves:", error);
-  }
-}
-
-// dialog : render characteristics ==> optional / not used on current pokemon card
-async function renderCharacteristics(indexOfPokemon) {
-  let urlCharacteristics = "https://pokeapi.co/api/v2/characteristic/";
-  let idOfPokemon = indexOfPokemon + 1;
-  let responseCharacteristics = await fetch(urlCharacteristics + idOfPokemon);
-  let characteristicsData = await responseCharacteristics.json();
-  document.getElementById("dialog-content-characteristics").innerHTML =
-    characteristicsData.descriptions[4].description;
 }

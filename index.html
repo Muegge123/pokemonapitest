@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PokemonApp</title>
+    <link rel="icon" type="image/vnd.icon" href="./img/pokeball.png" />
     <link rel="stylesheet" href="./style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./script.js"></script>
     <script src="./returnHtmlTemplates.js"></script>
   </head>
@@ -53,47 +55,25 @@
         </div>
         <div class="dialog-content">
           <div class="dialog-content-inner">
-            <!-- <h3>Characteristics:</h3>
-            <div id="dialog-content-characteristics">Characteristics</div> -->
-            <h3>Stats:</h3>
-            <div id="dialog-content-data">stats</div>
-            <h3>Evolution:</h3>
-            <div id="dialog-content-evo">evolution</div>
-            <h3>Abilities:</h3>
-            <div id="dialog-content-moves">abilities</div>
+            <div id="dialog-content-inner-nav"></div>
+            <div id="dialog-tab-container"></div>
           </div>
         </div>
       </div>
     </div>
     <!-- END dialog -->
 
-    <div id="pokedex">
-      <div id="pokemon-card1" class="pokemon-card">
-        <div class="pokemon-card-left">
-          <h2 id="pokemon-name">Name</h2>
-          <div class="pokemon-skills">
-            <span class="pokemon-skill-span">fire</span>
-            <span class="pokemon-skill-span">fire</span>
-          </div>
-        </div>
-        <div class="pokemon-card-right">
-          <div class="pokemon-id">#1</div>
-          <div class="pokemon-img-container">
-            <img
-              class="pokemon-background-img"
-              src="./img/pokeball.png"
-              alt=""
-            />
-            <img
-              id="pokemon-img"
-              class="pokemon-img"
-              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/132.png"
-              alt=""
-            />
-          </div>
-        </div>
-      </div>
+    <!-- START Loading Info Dialog -->
+    <div id="loading-info-shadow" class="d-none">
+      <img
+        id="loading-info-img"
+        src="./img/pokeball.png"
+        alt="pokeball loading info"
+      />
     </div>
+    <!-- END Loading Info Dialog -->
+
+    <div id="pokedex"></div>
 
     <div class="load-more-container">
       <button id="load-more-btn" onclick="loadMorePokemon()">
@@ -109,5 +89,9 @@
         >icons by fontawesome</a
       >
     </footer>
+
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
   </body>
 </html>
